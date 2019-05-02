@@ -1,10 +1,17 @@
 package gp.geniusplazaproject;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
 
     String url = "https://reqres.in/api/users";
 
+    String first, last, image;
+
+    private int count_id;
+
+    private static final String TAG = "MainActivity";
+
+    private Dialog logDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +64,19 @@ public class MainActivity extends AppCompatActivity {
         mRequestQueue = Volley.newRequestQueue(this);
 
         parseJSON();
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                addUser();
+
+            }
+        });
+
+        logDialog = new Dialog(this);
     }
 
     private void parseJSON() {
@@ -120,5 +149,45 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mRequestQueue.add(postRequest);
+    }
+
+    private void addUser(){
+
+        logDialog.setContentView(R.layout.layout_confirm_dialog);
+        ProfileModel user = new ProfileModel(  );
+
+        final EditText addFirstName = logDialog.findViewById( R.id.add_first );
+        final EditText addLastName = logDialog.findViewById( R.id.add_last );
+        final EditText addImg = logDialog.findViewById( R.id.add_image );
+
+        Button confirm = logDialog.findViewById( R.id.confirm );
+        Button cancel = logDialog.findViewById( R.id.cancel );
+
+
+
+
+
+        confirm.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                first = addFirstName.getText().toString();
+                last = addLastName.getText().toString();
+                image = addImg.getText().toString();
+
+                postProfile(count_id, first,last,image);
+                logDialog.dismiss();
+
+            }
+        } );
+        cancel.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logDialog.dismiss();
+            }
+        } );
+        logDialog.getWindow().setBackgroundDrawable(new ColorDrawable( Color.TRANSPARENT));
+        logDialog.show();
+
     }
 }
